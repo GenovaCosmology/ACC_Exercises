@@ -1,0 +1,36 @@
+name: Update README with Exercise Descriptions
+
+on:
+  push:
+    paths:
+      - '**/*.ipynb'
+
+concurrency:
+  group: update-readme
+  cancel-in-progress: false
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Update README
+        run: python .github/scripts/update_readme.py
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --staged --quiet || (git commit -m "docs: update README with exercise descriptions [skip ci]" && git pull --rebase && git push)
