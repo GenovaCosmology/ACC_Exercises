@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def extract_description(notebook_path):
-    """Extract a brief description (max 3 lines) from a Jupyter notebook.
+    """Extract tasks from a Jupyter notebook as an itemised list.
 
     Prefers markdown cells; falls back to comment lines in code cells.
     """
@@ -20,7 +20,7 @@ def extract_description(notebook_path):
             source = "".join(cell["source"])
             lines = [line for line in source.strip().splitlines() if line.strip()]
             if lines:
-                return "\n".join(lines[:3])
+                return "\n".join(f"- {line}" for line in lines)
 
     # Fall back to comment lines in code cells
     comments = []
@@ -32,13 +32,9 @@ def extract_description(notebook_path):
                     comment = stripped[1:].strip()
                     if comment:
                         comments.append(comment)
-                if len(comments) >= 3:
-                    break
-        if len(comments) >= 3:
-            break
 
     if comments:
-        return "\n".join(comments[:3])
+        return "\n".join(f"- {comment}" for comment in comments)
 
     return "No description available."
 
