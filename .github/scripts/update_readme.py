@@ -62,8 +62,9 @@ def build_exercises_section(repo_root):
         section += f"\n### {folder}\n"
         for nb_path in sorted(notebooks_by_folder[folder]):
             name = nb_path.stem
+            rel_path = nb_path.relative_to(repo_root)
             description = extract_description(nb_path)
-            section += f"\n#### {name}\n{description}\n"
+            section += f"\n#### [{name}]({rel_path.as_posix()})\n{description}\n"
 
     return section
 
